@@ -1,14 +1,18 @@
-#			-->|   Files to Compile   |<--
-FILES		=		aux_itoas aux_types aux_checks aux_builds aux_utils ft_printf
-
-#			-->|   Settings   |<--
-PROG		=	0
-EXT			=	1
-
 #			-->|   Titles && Messages   |<--
-HEAD		=		"42 Printf"
-NAME		=		libftprintf.a
-DIRS		=		libft
+HEAD		=		"42 Build"
+NAME		=		ft_build.a
+
+L_HEAD		=		"42 Library"
+L_NAME		=		libft.a
+L_DIR		=		libft/
+
+P_HEAD		=		"42 Printf"
+P_NAME		=		libftprintf.a
+P_DIR		=		ft_printf/
+
+G_HEAD		=		"Get Next Line"
+G_NAME		=		gnl.a
+G_DIR		=		gnl/
 
 T_CREATING	=		@echo "$(GRAY)-->|	$(BBLUE)Creating $(HEAD) at $(NAME) $(GRAY)...\n"
 T_BUILDING	=		@echo "\n	$(GRAY)... $(BYELLOW)Building $@ $(GRAY)... \n"
@@ -35,18 +39,9 @@ BBLUE		=		\033[1;34m
 BMAGENTA	=		\033[1;35m
 BCYAN		=		\033[1;36m
 
-#			-->|   Print Messsages   |<--
-
-
 #			-->|   Conditional Command Definitions   |<--
 START		=		1
-ifeq ($(PROG),1)
 INC_DIR		=		includes/
-SRC_DIR		=		src/
-else
-INC_DIR		=		./
-SRC_DIR		=		./
-endif
 OBJ_DIR		=		obj/
 
 FLAGS		=		-Wall -Wextra -Werror
@@ -55,21 +50,7 @@ M			=		@make --no-print-directory
 COMPILE		=		@cc $(FLAGS) -I $(INC_DIR) -c $< -o $@
 EXE			=		@cc -I $(INC_DIR) -o exe main.c $(NAME) && ./exe && rm -f exe
 RMV			=		@rm -rf $(OBJ_DIR)
-AR			=		@ar -rcs $@ $(OBJ)
-
-SRC			=		$(addprefix $(SRC_DIR), $(addsuffix .c, $(FILES)))
-OBJ			=		$(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES)))
-
-ifeq ($(EXT), 1)
-LIBS		=		$(addprefix $(DIRS)/, $(addsuffix .a, $(DIRS))) 
-AR_EXT		=		$(M) -C $(DIRS) all && cp $(LIBS) $(NAME)
-M_C			=		$(M) -C $(DIRS) clean
-M_F			=		$(M) -C $(DIRS) fclean
-else
-AR_EXT		=
-M_C			=
-M_F			=
-endif
+AR			=		@ar -rcs $@ $<
 
 #			-->|   Rules   |<--
 .PHONY: all bonus clean fclean re exe
@@ -77,7 +58,18 @@ endif
 all: $(START) $(NAME)
 	$(T_COMPILED)
 
-bonus: re
+lib: $(L_NAME)
+	$(T_COMPILED)
+
+print: $(L_NAME) $(P_NAME)
+	@cp $(L_NAME) $(P_NAME)
+	@rm -f $(L_NAME)
+	$(T_COMPILED)
+
+gnl: $(L_NAME) $(G_NAME)
+	@cp $(L_NAME) $(G_NAME)
+	@rm -f $(L_NAME)
+	$(T_COMPILED)
 
 clean:
 	$(M_C)
@@ -98,17 +90,34 @@ exe: re
 	$(T_EXECUTED)
 
 #			-->|   File Dependencies   |<--
-$(START):
+$(START): $(HEAD)
 	$(T_CREATING)
 
 $(OBJ_DIR):
 	@mkdir $(OBJ_DIR)
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c | $(OBJ_DIR)
-	$(T_COMPILING)
-	$(COMPILE)
-
-$(NAME): $(OBJ)
+$(L_NAME):
+	$(OBJ_DIR)*.o: $(L_DIR)*.c | $(OBJ_DIR)
+		$(T_COMPILING)
+		$(COMPILE)
 	$(T_BUILDING)
 	$(AR_EXT)
-	$(AR)
+
+$(P_NAME):
+	$(OBJ_DIR)*.o: $(P_DIR)*.c | $(OBJ_DIR)
+		$(T_COMPILING)
+		$(COMPILE)
+	$(T_BUILDING)
+	$(AR_EXT)
+
+$(G_NAME):
+	$(OBJ_DIR)%.o: $(G_DIR)%.c | $(OBJ_DIR)
+		$(T_COMPILING)
+		$(COMPILE)
+	$(T_BUILDING)
+	$(AR_EXT)
+
+$(NAME): $(L_NAME) $(P_NAME) $(G_NAME)
+	$(T_BUILDING)
+	@cp $(L_NAME) $(P_NAME) $(G_NAME) $(NAME)
+	@rm -f $(L_NAME) $(P_NAME) $(G_NAME)
