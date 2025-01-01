@@ -16,6 +16,7 @@ void	*ft_calloc(size_t bit, size_t n)
 {
 	void	*res;
 
+	res = 0;
 	if (bit <= ((size_t)1 << 63) - 1 && n <= ((size_t)1 << 63) - 1)
 		res = malloc(bit * n);
 	if (!res)

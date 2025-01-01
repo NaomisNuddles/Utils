@@ -1,29 +1,56 @@
-#			-->|   Titles && Messages   |<--
-HEAD		=		"42 Build"
-NAME		=		ft_build.a
+#			-->|   Files to Compile   |<--
+FILES_L		=		ft_isalpha ft_isdigit ft_isalnum ft_isascii ft_isprint			\
+					ft_memset ft_bzero ft_memcpy ft_memmove ft_memchr ft_memcmp		\
+					ft_toupper ft_tolower ft_strchr ft_strrchr ft_strnstr			\
+					ft_strlen ft_strncmp ft_strlcpy ft_strlcat ft_atoi ft_itoa		\
+					ft_calloc ft_strdup ft_substr ft_strjoin ft_strtrim ft_split	\
+					ft_strmapi ft_striteri											\
+					ft_putchar_fd ft_putstr_fd ft_putnbr_fd ft_putendl_fd			\
+					ft_lstnew ft_lstadd_front ft_lstadd_back ft_lstsize ft_lstlast	\
+					ft_lstdelone ft_lstclear ft_lstiter ft_lstmap
+
+FILES_P		=		aux_itoas aux_types aux_checks aux_builds aux_data aux_format ft_printf
+
+FILES_G		=		get_next_line_utils get_next_line
+
+#			-->|   Titles   |<--
+HEAD		=		"42 Utils Build"
+NAME		=		ft_utils_lib.a
+RUN			=		build.exe
 
 L_HEAD		=		"42 Library"
-L_NAME		=		libft.a
-L_DIR		=		libft/
-
 P_HEAD		=		"42 Printf"
-P_NAME		=		libftprintf.a
-P_DIR		=		ft_printf/
-
 G_HEAD		=		"Get Next Line"
-G_NAME		=		gnl.a
-G_DIR		=		gnl/
 
-T_CREATING	=		@echo "$(GRAY)-->|	$(BBLUE)Creating $(HEAD) at $(NAME) $(GRAY)...\n"
-T_BUILDING	=		@echo "\n	$(GRAY)... $(BYELLOW)Building $@ $(GRAY)... \n"
-T_COMPILING	=		@echo "	$(GRAY)... $(YELLOW)Compiling $< $(GRAY)..."
-T_REMOVE_O	=		@echo "$(MAGENTA)$(HEAD): Objects Removed!$(DEF)\n"
-T_REMOVE_A	=		@echo "$(BMAGENTA)$(HEAD): All Files Removed!$(DEF)\n"
-T_COMPILED	=		@echo "$(BGREEN)	     $(HEAD) Compiled!   $(GRAY)|<--$(DEF)\n"
-T_EXECUTING	=		@echo "\n$(GRAY)-->|	$(BLUE)Executing: $(BCYAN)$(NAME) - main.c $(BLUE)at $(WHITE)exe $(GRAY)...$(DEF)"
-T_EXECUTED	=		@echo "$(GRAY)	...$(BGREEN)Execution Ended!   $(GRAY)|<--$(DEF)\n"
+#			-->|   Command Definitions   |<--
+INC_DIR		=		includes
+LIB_DIR		=		libft/
+PTF_DIR		=		ft_printf/
+GNL_DIR		=		gnl/
+OBJ_DIR		=		objects/
 
-#			-->|   Colors   |<--
+SRC_L		=		$(addprefix $(LIB_DIR), $(addsuffix .c, $(FILES_L)))
+SRC_P		=		$(addprefix $(PTF_DIR), $(addsuffix .c, $(FILES_P)))
+SRC_G		=		$(addprefix $(GNL_DIR), $(addsuffix .c, $(FILES_G)))
+OBJ_L		=		$(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES_L)))
+OBJ_P		=		$(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES_P)))
+OBJ_G		=		$(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES_G)))
+
+FLAGS		=		-g -Wall -Wextra -Werror -I
+BUFFER		=		-D BUFFER_SIZE=42
+MAX_FD		=		-D MAX_FD=4096
+COMPILE		=		@cc $(FLAGS) $(INC_DIR) -c $< -o $@
+
+RMV			=		@rm -rf $(OBJ_DIR)
+CRT			=		@ar -rcs $(NAME)
+AR			=		@ar -rcs $(NAME) $(OBJ_L) $(OBJ_P) $(OBJ_G)
+EXE			=		@cc $(FLAGS) $(INC_DIR) -o $(RUN) .main.c $(NAME) && ./$(RUN)
+
+#			-->|   Colors & Messages   |<--
+START		=		start
+MID			=		mid
+MID2		=		mid2
+
 GRAY		=		\033[0;30m
 GREEN		=		\033[0;32m
 YELLOW		=		\033[0;33m
@@ -39,36 +66,21 @@ BBLUE		=		\033[1;34m
 BMAGENTA	=		\033[1;35m
 BCYAN		=		\033[1;36m
 
-#			-->|   Conditional Command Definitions   |<--
-START		=		1
-INC_DIR		=		includes/
-OBJ_DIR		=		obj/
-
-FLAGS		=		-Wall -Wextra -Werror
-M			=		@make --no-print-directory
-
-COMPILE		=		@cc $(FLAGS) -I $(INC_DIR) -c $< -o $@
-EXE			=		@cc -I $(INC_DIR) -o exe main.c $(NAME) && ./exe && rm -f exe
-RMV			=		@rm -rf $(OBJ_DIR)
-AR			=		@ar -rcs $@ $<
+T_CREATING	=		@echo "$(GRAY)-->|	$(BBLUE)Creating $(HEAD) at $(NAME) $(GRAY)...\n"
+T_BUILDING	=		@echo "	$(GRAY)... $(BYELLOW)Building $(NAME) $(GRAY)... \n"
+T_COMPILING	=		@echo "	$(GRAY)... $(YELLOW)Compiling $(WHITE)$(FLAGS): $(YELLOW)$< $(GRAY)..."
+T_MID		=		@echo "		$(GRAY)..."
+T_REMOVE_O	=		@echo "$(MAGENTA)$(HEAD): Objects Removed!$(DEF)\n"
+T_REMOVE_A	=		@echo "$(BMAGENTA)$(HEAD): All Files Removed!$(DEF)\n"
+T_COMPILED	=		@echo "\n$(BGREEN)	     $(HEAD) Compiled!   $(GRAY)|<--$(DEF)\n"
+T_EXECUTING	=		@echo "\n$(GRAY)-->|	$(BLUE)Executing: $(BCYAN)$(NAME) - main.c $(BLUE)at $(WHITE)exe $(GRAY)...$(DEF)"
+T_EXECUTED	=		@echo "$(GRAY)	...$(BGREEN)Execution Ended!   $(GRAY)|<--$(DEF)\n"
 
 #			-->|   Rules   |<--
 .PHONY: all bonus clean fclean re exe
 
 all: $(START) $(NAME)
-	$(T_COMPILED)
-
-lib: $(L_NAME)
-	$(T_COMPILED)
-
-print: $(L_NAME) $(P_NAME)
-	@cp $(L_NAME) $(P_NAME)
-	@rm -f $(L_NAME)
-	$(T_COMPILED)
-
-gnl: $(L_NAME) $(G_NAME)
-	@cp $(L_NAME) $(G_NAME)
-	@rm -f $(L_NAME)
+	$(AR)
 	$(T_COMPILED)
 
 clean:
@@ -76,10 +88,10 @@ clean:
 	$(RMV)
 	$(T_REMOVE_O)
 
-
 fclean:
 	$(M_F)
-	$(RMV) $(NAME)
+	$(RMV) $(NAME) $(RUN)
+	$(RMV_E)
 	$(T_REMOVE_A)
 
 re: fclean all
@@ -90,34 +102,30 @@ exe: re
 	$(T_EXECUTED)
 
 #			-->|   File Dependencies   |<--
-$(START): $(HEAD)
-	$(T_CREATING)
-
 $(OBJ_DIR):
 	@mkdir $(OBJ_DIR)
 
-$(L_NAME):
-	$(OBJ_DIR)*.o: $(L_DIR)*.c | $(OBJ_DIR)
-		$(T_COMPILING)
-		$(COMPILE)
-	$(T_BUILDING)
-	$(AR_EXT)
+$(OBJ_DIR)%.o: $(LIB_DIR)%.c | $(OBJ_DIR)
+	$(T_COMPILING)
+	$(COMPILE)
 
-$(P_NAME):
-	$(OBJ_DIR)*.o: $(P_DIR)*.c | $(OBJ_DIR)
-		$(T_COMPILING)
-		$(COMPILE)
-	$(T_BUILDING)
-	$(AR_EXT)
+$(OBJ_DIR)%.o: $(PTF_DIR)%.c | $(OBJ_DIR)
+	$(T_COMPILING)
+	$(COMPILE)
 
-$(G_NAME):
-	$(OBJ_DIR)%.o: $(G_DIR)%.c | $(OBJ_DIR)
-		$(T_COMPILING)
-		$(COMPILE)
-	$(T_BUILDING)
-	$(AR_EXT)
+$(OBJ_DIR)%.o: $(GNL_DIR)%.c | $(OBJ_DIR)
+	$(T_COMPILING)
+	$(COMPILE)
 
-$(NAME): $(L_NAME) $(P_NAME) $(G_NAME)
+$(NAME): $(OBJ_L) $(MID) $(OBJ_P) $(MID2) $(OBJ_G)
+	$(CRT)
+
+$(START):
+	$(T_CREATING)
 	$(T_BUILDING)
-	@cp $(L_NAME) $(P_NAME) $(G_NAME) $(NAME)
-	@rm -f $(L_NAME) $(P_NAME) $(G_NAME)
+
+$(MID):
+	$(T_MID)
+
+$(MID2):
+	$(T_MID)
