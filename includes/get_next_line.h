@@ -43,5 +43,4 @@ char			*buff_save(char *buff, char *lag);
 //get_next_line.c
 char			*get_next_line(int fd);
 
-//utils
 #endif //GET_NEXT_LINE_H
