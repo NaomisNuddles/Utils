@@ -5,6 +5,11 @@
 
 int	main()
 {
+	int a = ft_printf("%x", 0);
+	ft_printf("\nsize: %i\n", a);
+}
+/*int	main()
+{
 	int		fd[10];
 	char	*txt[] = {"", "tests/empty.txt", "tests/char.txt", "tests/nlx5.txt", "tests/line.txt", \
 	"tests/line_nl.txt", "tests/line_nlx2_line.txt", "tests/line_nlx2_line_nl.txt", \
@@ -56,4 +61,4 @@ int	main()
 	ft_printf("... DONE\n\n");
 
 	ft_printf("\033[1;34mEND OF BUFFER_SIZE: %i\n\n\033[0;39m", BUFFER_SIZE);
-}
+}*/
